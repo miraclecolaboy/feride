@@ -8,8 +8,12 @@ function addCountdown() {
         return;
     }
 
+    //发现时间有差 确保目标日期为午夜时间
     const eventDate = new Date(targetDate);
+    eventDate.setHours(0, 0, 0, 0); // 将时间部分设置为00:00:00
+
     const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0); // 将当前时间设置为00:00:00，避免影响计算
     const timeDiff = eventDate - currentDate;
     const dayDiff = Math.floor(timeDiff / (3600 * 1000 * 24));
     
