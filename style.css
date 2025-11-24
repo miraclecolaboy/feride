@@ -1,0 +1,23 @@
+.countup-box {
+    color: rgb(228, 127, 152);
+
+    font-size: 20px;
+     
+}
+.countdown-box {
+    color: lch(49.94% 48.93 279.56);
+ 
+    font-size: 20px;
+  
+}
+
+.countdown-item {
+    display: flex;
+    align-items: flex-start;
+ margin: 10px 0;
+}
+
+label {
+    font-size: 20px;  
+    margin-bottom: 5px; 
+}

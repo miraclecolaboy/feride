@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gün Sayacı</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h2>Özel Gün/ Geri Sayım</h2>
+
+    <label for="name">Etkinlik Adını Girin</label>
+    <input type="text" id="name" placeholder="Örneğin: Doğum Günü/ Yıldönümü">
+    <br>
+    
+    <label for="date-input">Hedef Tarihi Girin</label>
+    <input type="date" id="date-input">
+    
+    <button onclick="addCountdown()">Kayıt Ekle</button>
+    <hr>
+    <div id="countdowns"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
