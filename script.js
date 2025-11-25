@@ -1,82 +1,90 @@
-// Kayıt ekleme fonksiyonu
-function addCountdown() {
-    const eventName = document.getElementById("name").value;
-    const targetDate = document.getElementById("date-input").value;
-    
-    if (!(eventName && targetDate)) {
-        alert("Etkinlik adı veya tarihini girin.");
+// Depolanan etkinlik listesini al (localStorage'dan)
+function getStoredEvents() {
+    const storedEvents = localStorage.getItem("events");
+    // Eğer etkinlik yoksa, boş bir dizi döndür
+    return storedEvents ? JSON.parse(storedEvents) : [];
+}
+
+// Etkinlik listesini localStorage'a kaydet
+function saveEvents(events) {
+    localStorage.setItem("events", JSON.stringify(events));
+}
+
+// Yeni etkinlik ekleme
+function addEvent() {
+    const eventName = document.getElementById("eventName").value;
+    const eventDate = new Date(document.getElementById("eventDate").value).getTime();
+
+    if (!eventName || !eventDate) {
+        alert("Etkinlik adı ve tarihi giriniz.");
         return;
     }
 
-    //发现时间有差 确保目标日期为午夜时间
-    const eventDate = new Date(targetDate);
-    eventDate.setHours(0, 0, 0, 0); // 将时间部分设置为00:00:00
+    const events = getStoredEvents();  // Mevcut etkinlikleri al
+    events.push({ name: eventName, date: eventDate });  // Yeni etkinlik ekle
+    saveEvents(events);  // Güncellenmiş etkinlikleri kaydet
 
-    const currentDate = new Date();
-    currentDate.setHours(0, 0, 0, 0); // 将当前时间设置为00:00:00，避免影响计算
-    const timeDiff = eventDate - currentDate;
-    const dayDiff = Math.floor(timeDiff / (3600 * 1000 * 24));
-    
-    displayRecord(eventName, dayDiff);
-
-    const saveRecord = { eventName: eventName, dayDiff: dayDiff }; 
-    const records = JSON.parse(localStorage.getItem('records')) || [];
-    records.push(saveRecord);
-    localStorage.setItem('records', JSON.stringify(records));  
+    displayLists();  // Etkinlik listesini güncelle
+    document.getElementById("eventName").value = '';  // Girdi kutusunu temizle
+    document.getElementById("eventDate").value = '';  // Tarih kutusunu temizle
 }
 
-// Sayfa yüklendiğinde verileri yükle
-function loadrecords() {        
-    const records = JSON.parse(localStorage.getItem('records')) || [];
-    records.forEach(record => {
-        displayRecord(record.eventName, record.dayDiff);
+// Etkinlik listesini render et (geri sayım ve anılar)
+function displayLists() {
+    const events = getStoredEvents();  // Depolanan etkinlikleri al
+
+    const countdownList = document.getElementById("countdownList");
+    const countupList = document.getElementById("countupList");
+
+    countdownList.innerHTML = '';
+    countupList.innerHTML = '';
+
+    events.forEach((event, index) => {
+        const countdownItem = createListItem(event, 'countdown', index);
+        const countupItem = createListItem(event, 'countup', index);
+
+        // Eğer etkinlik geri sayımda ise, geri sayım bölgesine ekle
+        if (event.date > Date.now()) {
+            countdownList.appendChild(countdownItem);
+        } 
+        // Eğer etkinlik anıdaysa, anı bölgesine ekle
+        else {
+            countupList.appendChild(countupItem);
+        }
     });
 }
-window.onload = loadrecords;
 
-// Etkinlik ve gün farkını ekranda gösterme fonksiyonu
-function displayRecord(eventName, dayDiff) {
-    let countdownText;
-    let countupText;
+// Liste öğesi oluştur (geri sayım veya anı)
+function createListItem(event, type, index) {
+    const li = document.createElement("li");  // Yeni <li> öğesi oluştur
+    const timeDiff = Date.now() - event.date;  // Mevcut zaman ile etkinlik zamanı arasındaki farkı hesapla
 
-    // Gün farkını kontrol et
-    if (dayDiff > 0) {
-        countdownText = `${eventName} için ${dayDiff} gün kaldı`;
-    } else if (dayDiff < 0) {
-        countupText = `${eventName} ${Math.abs(dayDiff)} gün önceydi`;
-    } else {
-        countdownText = `${eventName} bugünde!`;
-    }
+    // Türüne göre gün sayısını hesapla: geri sayım ve anılar için farklı hesaplamalar
+    let days = type === 'countdown'
+        ? Math.ceil((event.date - Date.now()) / (1000 * 3600 * 24))  // Geri sayım: etkinlik tarihi ile mevcut tarih arasındaki fark
+        : Math.floor(timeDiff / (1000 * 3600 * 24));  // Anılar: mevcut tarih ile etkinlik tarihi arasındaki fark
 
-    const countdownDiv = document.createElement("div");
-    countdownDiv.classList.add("countdown-item");
+    // <li> öğesinin içeriğini ayarla: etkinlik adı ve gün sayısı
+    li.textContent = `${event.name} - ${type === 'countdown' ? 'Kalan' : 'Geçen'} ${days} Gün`;
 
-    const countdownContent = document.createElement("span");
-    countdownContent.classList.add("countdown-box");
-    countdownContent.textContent = countdownText;
-
-    const countupContent = document.createElement("span");
-    countupContent.classList.add("countup-box");
-    countupContent.textContent = countupText;
-
+    // Silme düğmesi oluştur
     const deleteBtn = document.createElement("button");
     deleteBtn.textContent = "Sil";
-    deleteBtn.onclick = function() {
-        removeRecord(eventName, dayDiff, countdownDiv);
-    }
+    deleteBtn.onclick = () => deleteEvent(index);  // Düğmeye tıklandığında etkinliği sil
 
-    countdownDiv.appendChild(countdownContent);
-    countdownDiv.appendChild(countupContent);
-    countdownDiv.appendChild(deleteBtn);
-
-    const countdownContainer = document.getElementById("countdowns");
-    countdownContainer.appendChild(countdownDiv);
+    li.appendChild(deleteBtn);  // Silme düğmesini <li> öğesine ekle
+    return li;  // Oluşturduğumuz <li> öğesini döndür
 }
 
-// Kayıt silme fonksiyonu
-function removeRecord(eventName, dayDiff, countdownDiv) {
-    const records = JSON.parse(localStorage.getItem('records')) || [];
-    const updatedRecords = records.filter(record => !(record.eventName === eventName && record.dayDiff === dayDiff));
-    localStorage.setItem('records', JSON.stringify(updatedRecords));
-    countdownDiv.remove();
+// Sayfa yüklendiğinde: Etkinlik listesini göster
+document.addEventListener("DOMContentLoaded", function () {
+    displayLists();  // Sayfa yüklendiğinde etkinlik listesini render et
+});
+
+// Etkinlik silme
+function deleteEvent(index) {
+    const events = getStoredEvents();  // Mevcut etkinlik listesini al
+    events.splice(index, 1);  // Belirtilen indeksteki etkinliği sil
+    saveEvents(events);  // Güncellenmiş etkinlikleri kaydet
+    displayLists();  // Etkinlik listesini güncelle
 }

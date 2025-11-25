@@ -3,23 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gün Sayacı</title>
+    <title>Feride Prensesinin Anı Defteri</title> 
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h2>Özel Gün/ Geri Sayım</h2>
 
-    <label for="name">Etkinlik Adını Girin</label>
-    <input type="text" id="name" placeholder="Örneğin: Doğum Günü/ Yıldönümü">
-    <br>
-    
-    <label for="date-input">Hedef Tarihi Girin</label>
-    <input type="date" id="date-input">
-    
-    <button onclick="addCountdown()">Kayıt Ekle</button>
-    <hr>
-    <div id="countdowns"></div>
+    <div class="head">
+        <label for="eventName">Anı/geri sayım:</label>
+        <input type="text" id="eventName" placeholder="Etkinlik adı girin, örneğin doğum günü ya da spor günleri">
+        
+        <label for="eventDate">Tarih seçin:</label>
+        <input type="date" id="eventDate">
+        
+        <button onclick="addEvent()">Etkinlik Ekle</button>
+    </div>
+
+    <div class="container">
+        <div class="countdown">
+            <h2>Geri Sayım</h2>
+            <ul id="countdownList"></ul>
+        </div>
+
+        <div class="countup">
+            <h2>Anılar</h2>
+            <ul id="countupList"></ul>
+        </div>
+    </div>
 
     <script src="script.js"></script>
+
 </body>
 </html>

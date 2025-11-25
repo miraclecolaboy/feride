@@ -1,23 +1,78 @@
-.countup-box {
-    color: rgb(228, 127, 152);
 
-    font-size: 20px;
-     
-}
-.countdown-box {
-    color: lch(49.94% 48.93 279.56);
- 
-    font-size: 20px;
-  
-}
-
-.countdown-item {
+body {
+    font-family: Arial, sans-serif;
     display: flex;
-    align-items: flex-start;
- margin: 10px 0;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 20px;
+    height: 100vh;
+    margin: 0;
+    background-color: #f4f4f4;
+}
+
+/* .head部分，居中显示，限制最大宽度 */
+.head {
+    width: 80%;
+    max-width: 500px; 
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+/* 输入框和按钮样式 */
+input, button {
+    margin: 10px 0;
+    padding: 8px;
+    width: 100%; 
+    box-sizing: border-box;
+    /* border-radius: 10px; */
 }
 
 label {
-    font-size: 20px;  
-    margin-bottom: 5px; 
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+/* 倒计时和正计时容器 */
+.container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1000px;
+    margin-top: 20px;
+}
+
+.countdown, .countup {
+    width: 45%;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.countdown {
+    background-color: #d4edda;  
+}
+
+.countup {
+    background-color: #f8d7da;  
+}
+
+h2 {
+    text-align: center;
+}
+
+/* 列表样式 */
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* 页面宽度小于500px时的调整 */
+@media (max-width: 500px) {
+    .countdown, .countup {
+        width: 90%; /* 在小屏幕时倒计时和正计时区域占90%宽度 */
+    }
 }
